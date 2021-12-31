@@ -39,18 +39,26 @@ def lambda_handler(event, context):
     )
     user = response.get('Item', {})
 
+    # Check if user exists
+    if not user:
+        return {
+            "statusCode": 409,
+            "body": json.dumps("The user is not registered")
+        }
+
     # Check database with request password
     if user.get("password") != user_password:
         return {
             "statusCode": 401,
             "body": json.dumps("The password is incorrect")
         }
+
+    del user["password"]
     
     data = {
         "message": "Login succesfully",
         "user": user
     }
-
 
     return {
         "statusCode": 200,
