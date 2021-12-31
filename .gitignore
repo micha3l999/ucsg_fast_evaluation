@@ -1,0 +1,9 @@
+# Excluding Jetbrain folder
+.idea
+.vscode
+
+# Excluding all .zip files
+/*/*.zip
+
+# Ecluding all lambda_event.json
+/*/*.json
