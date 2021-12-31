@@ -5,6 +5,7 @@ def lambda_handler(event, context):
     
     # Reading 'body' from event
     body = event.get("body")
+
     body_json = json.loads(body)
 
     if not body_json:
@@ -26,13 +27,24 @@ def lambda_handler(event, context):
             "body": json.dumps("No password found in payload")
         }
 
-    # user_payload = json.loads(body)
     user_payload = {}
     user_payload["id"] = body_json.get("identification")
     user_payload["password"] = body_json.get("password")
 
+    # Getting dynamodb resource
     dynamodb = boto3.resource('dynamodb')
     table = dynamodb.Table('CommunityUsers')
+
+    # Check user in the database
+    user_already_created = check_user_created(user_payload["id"], table)
+    
+    if user_already_created:
+        return {
+            "statusCode": 409,
+            "body": json.dumps("User is already registered")
+        }
+
+    # Creating user in database
     response = table.put_item(
         Item = user_payload
     )
@@ -51,3 +63,20 @@ def lambda_handler(event, context):
             "Access-Control-Allow-Credentials" : True
         }
     }
+
+def check_user_created(identification, table):
+
+    # Searching user in database
+    response = table.get_item(
+        Key = {
+            'id': identification
+        }
+    )
+
+    user = response.get('Item', {})
+
+    if not user:
+        return False
+    
+    return True
+
