@@ -55,7 +55,7 @@ def lambda_handler(event, context):
             'id': user_payload["id"],
         },
         UpdateExpression = "set id=:i, name=:n, age=:a, address=:ad",
-        ExpressionAttributesValues= {
+        ExpressionAttributeValues= {
             ':i': user_payload["id"],
             ':n': user_payload["name"],
             ':a': user_payload["age"],
