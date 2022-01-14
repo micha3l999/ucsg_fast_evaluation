@@ -38,16 +38,9 @@ def lambda_handler(event, context):
             "statusCode": 400,
             "body": json.dumps("No identification found in payload")
         }
-    
-    if not body_json.get("password"):
-        return {
-            "statusCode": 400,
-            "body": json.dumps("No password found in payload")
-        }
 
     user_payload = {}
     user_payload["id"] = body_json.get("identification")
-    user_payload["password"] = body_json.get("password")
     user_payload["name"] = body_json.get("name")
     user_payload["address"] = body_json.get("address")
     user_payload["age"] = body_json.get("age")
@@ -61,13 +54,12 @@ def lambda_handler(event, context):
         Key =  {
             'id': user_payload["id"],
         },
-        UpdateExpression = "set id=:i, name=:n, age=:a, address=:ad, password=:p",
+        UpdateExpression = "set id=:i, name=:n, age=:a, address=:ad",
         ExpressionAttributesValues= {
             ':i': user_payload["id"],
             ':n': user_payload["name"],
             ':a': user_payload["age"],
             ':ad': user_payload["address"],
-            ':p': user_payload["password"],
         },
         ReturnValues = "UPDATED_NEW"
     )
