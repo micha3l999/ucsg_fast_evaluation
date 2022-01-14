@@ -27,9 +27,30 @@ def lambda_handler(event, context):
             "body": json.dumps("No password found in payload")
         }
 
+    if not body_json.get("name"):
+        return {
+            "statusCode": 400,
+            "body": json.dumps("No name found in payload")
+        }
+    
+    if not body_json.get("address"):
+        return {
+            "statusCode": 400,
+            "body": json.dumps("No address found in payload")
+        }
+    
+    if not body_json.get("age"):
+        return {
+            "statusCode": 400,
+            "body": json.dumps("No age found in payload")
+        }
+
     user_payload = {}
     user_payload["id"] = body_json.get("identification")
     user_payload["password"] = body_json.get("password")
+    user_payload["name"] = body_json.get("name")
+    user_payload["address"] = body_json.get("address")
+    user_payload["age"] = body_json.get("age")
 
     # Getting dynamodb resource
     dynamodb = boto3.resource('dynamodb')
