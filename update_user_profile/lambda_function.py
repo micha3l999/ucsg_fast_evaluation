@@ -54,22 +54,22 @@ def lambda_handler(event, context):
         Key =  {
             'id': user_payload["id"],
         },
-        UpdateExpression = "set id=:i, name=:n, age=:a, address=:ad",
+        UpdateExpression = "set #nm=:n, age=:a, address=:ad",
         ExpressionAttributeValues= {
-            ':i': user_payload["id"],
             ':n': user_payload["name"],
             ':a': user_payload["age"],
             ':ad': user_payload["address"],
         },
+        ExpressionAttributeNames = {
+            "#nm": "name"
+        },
         ReturnValues = "UPDATED_NEW"
     )
-
-    user_updated = response.get('Item', {})
 
     # Response for the client
     data = {
         "message": "User was updated",
-        "user": user_updated
+        "user": user_payload
     }
 
     return {
