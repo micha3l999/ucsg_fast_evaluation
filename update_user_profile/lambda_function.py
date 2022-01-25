@@ -51,7 +51,7 @@ def lambda_handler(event, context):
 
     user_exists = check_user_created(user_payload["id"], table)
 
-    if user_exists:
+    if not user_exists:
         return {
             "statusCode": 400,
             "body": json.dumps("User doesn't exists")
