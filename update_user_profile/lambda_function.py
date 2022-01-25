@@ -49,6 +49,14 @@ def lambda_handler(event, context):
     dynamodb = boto3.resource('dynamodb')
     table = dynamodb.Table('CommunityUsers')
 
+    user_exists = check_user_created(user_payload["id"], table)
+
+    if user_exists:
+        return {
+            "statusCode": 400,
+            "body": json.dumps("User doesn't exists")
+        }
+
     # Creating user in database
     response = table.update_item(
         Key =  {
@@ -80,3 +88,19 @@ def lambda_handler(event, context):
             "Access-Control-Allow-Credentials" : True
         }
     }
+
+def check_user_created(identification, table):
+
+    # Searching user in database
+    response = table.get_item(
+        Key = {
+            'id': identification
+        }
+    )
+
+    user = response.get('Item', {})
+
+    if not user:
+        return False
+    
+    return True
