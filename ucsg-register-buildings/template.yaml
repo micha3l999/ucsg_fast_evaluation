@@ -1,0 +1,12 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  lamda local ucsg project to register user information of profile
+
+Resources:
+  LambdaFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: . # format is projectPath/
+      Handler: lambda_function.lambda_handler # format is filename.functionName
+      Runtime: python3.8
