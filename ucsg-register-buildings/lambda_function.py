@@ -55,13 +55,18 @@ def lambda_handler(event, context):
 
     # Creating user in database
     response = table.put_item(
-        Item = building_payload
+        Item = {
+            "userId": building_payload.get("userId"),
+        },
+        ConditionExpression = {
+            'attribute_not_exists(userId)'
+        }
     )
 
     # Response for the client
     data = {
         "message": "Building was created",
-        "user": building_payload
+        "user": response
     }
 
     return {
