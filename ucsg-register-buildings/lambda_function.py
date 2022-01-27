@@ -1,6 +1,7 @@
 import json
 import boto3
 import uuid
+from boto3.dynamodb.conditions import Key
 
 def lambda_handler(event, context):
     
@@ -14,7 +15,6 @@ def lambda_handler(event, context):
         }
 
     building_payload = json.loads(body)
-    building_payload["id"] = str(uuid.uuid4())
 
     # Return error mesage if the user payload does not have enough info
     if not building_payload.get("userId"):
@@ -33,40 +33,30 @@ def lambda_handler(event, context):
         return {
             "statusCode": 400,
             "body": json.dumps("Not valid structureType in payload")
-        }    
+        }
 
     # Getting dynamodb resource
     dynamodb = boto3.resource('dynamodb')
     table = dynamodb.Table('Buildings')
 
-    # Search if the user's building is already registered
+    # If the building exists get the building id
+    building_exists = check_user_buildings(building_payload["userId"], table)
 
-
-    # Check user in the database
-    """
-    building_exists = check_user_building(building_payload["userId"], table)
+    # Create an id if the element doesn't exists
+    if not building_exists:
+        building_payload["id"] = str(uuid.uuid4())
+    else:
+        building_payload["id"] = building_exists[0]["id"]
     
-    if building_exists:
-        return {
-            "statusCode": 409,
-            "body": json.dumps("Building exists")
-        }
-    """
-
     # Creating user in database
     response = table.put_item(
-        Item = {
-            "userId": building_payload.get("userId"),
-        },
-        ConditionExpression = {
-            'attribute_not_exists(userId)'
-        }
+        Item = building_payload
     )
 
     # Response for the client
     data = {
         "message": "Building was created",
-        "user": response
+        "user": building_payload
     }
 
     return {
@@ -78,22 +68,19 @@ def lambda_handler(event, context):
         }
     }
 
-def check_user_building(user_id, table):
+def check_user_buildings(user_id, table):
 
-    # Searching user in database
-    response = table.get_item(
+    # Searching buildings of the user in the dynamodb
+    response = table.query(
+        IndexName = "userId-index",
+        KeyConditionExpression = "userId = :usr",
         ExpressionAttributeValues = {
-
+            ":usr": user_id,
         },
-        FilterExpression = {
 
-        },
     )
 
-    user = response.get('Item', {})
-
-    if not user:
-        return False
+    buildings = response.get('Items', {})
     
-    return True
+    return buildings
 
