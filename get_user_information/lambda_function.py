@@ -39,8 +39,6 @@ def lambda_handler(event, context):
             "statusCode": 409,
             "body": json.dumps("The user is not registered")
         }
-
-    del user["password"]
     
     data = {
         "message": "success",
