@@ -44,6 +44,7 @@ def lambda_handler(event, context):
     user_payload["name"] = body_json.get("name")
     user_payload["address"] = body_json.get("address")
     user_payload["age"] = body_json.get("age")
+    user_payload["password"] = body_json.get("password")
 
     # Getting dynamodb resource
     dynamodb = boto3.resource('dynamodb')
@@ -62,11 +63,12 @@ def lambda_handler(event, context):
         Key =  {
             'id': user_payload["id"],
         },
-        UpdateExpression = "set #nm=:n, age=:a, address=:ad",
+        UpdateExpression = "set #nm=:n, age=:a, address=:ad, password=:pss",
         ExpressionAttributeValues= {
             ':n': user_payload["name"],
             ':a': user_payload["age"],
             ':ad': user_payload["address"],
+            ':pss': user_payload["password"],
         },
         ExpressionAttributeNames = {
             "#nm": "name"
