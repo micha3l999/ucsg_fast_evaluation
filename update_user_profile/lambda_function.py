@@ -65,10 +65,10 @@ def lambda_handler(event, context):
         },
         UpdateExpression = "set #nm=:n, age=:a, address=:ad, password=:pss",
         ExpressionAttributeValues= {
-            ':n': user_payload["name"],
-            ':a': user_payload["age"],
-            ':ad': user_payload["address"],
-            ':pss': user_payload["password"],
+            ':n': user_exists["name"] if not user_payload["name"] else user_payload["name"],
+            ':a': user_exists["age"] if not user_payload["age"] else user_payload["age"],
+            ':ad': user_exists["address"] if not user_payload["address"] else user_payload["address"],
+            ':pss': user_exists["password"] if not user_payload["password"] else user_payload["password"],
         },
         ExpressionAttributeNames = {
             "#nm": "name"
@@ -101,8 +101,5 @@ def check_user_created(identification, table):
     )
 
     user = response.get('Item', {})
-
-    if not user:
-        return False
     
-    return True
+    return user
