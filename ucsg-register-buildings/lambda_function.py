@@ -28,12 +28,6 @@ def lambda_handler(event, context):
             "body": json.dumps("Not valid userName in payload")
         }
     
-    if not building_payload.get("inspectorIdentification"):
-        return {
-            "statusCode": 400,
-            "body": json.dumps("Not valid inspectorIdentification in payload")
-        }
-    
     if not building_payload.get("structureType"):
         return {
             "statusCode": 400,
