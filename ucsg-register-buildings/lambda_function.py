@@ -1,7 +1,6 @@
 import json
 import boto3
 import uuid
-from boto3.dynamodb.conditions import Key
 
 def lambda_handler(event, context):
     
