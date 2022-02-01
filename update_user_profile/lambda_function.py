@@ -15,24 +15,6 @@ def lambda_handler(event, context):
         }
 
     # Return error mesage if the user payload does not have enough info
-    if not body_json.get("name"):
-        return {
-            "statusCode": 400,
-            "body": json.dumps("No name found in payload")
-        }
-
-    if not body_json.get("age"):
-        return {
-            "statusCode": 400,
-            "body": json.dumps("No age found in payload")
-        }
-
-    if not body_json.get("address"):
-        return {
-            "statusCode": 400,
-            "body": json.dumps("No address found in payload")
-        }
-    
     if not body_json.get("identification"):
         return {
             "statusCode": 400,
