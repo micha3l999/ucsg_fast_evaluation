@@ -2,8 +2,9 @@ import json
 import boto3
 import uuid
 
+
 def lambda_handler(event, context):
-    
+
     # Reading 'body' from event
     body = event.get("body")
 
@@ -27,18 +28,13 @@ def lambda_handler(event, context):
             "statusCode": 400,
             "body": json.dumps("Not valid userName in payload")
         }
-    
-    if not building_payload.get("structureType"):
-        return {
-            "statusCode": 400,
-            "body": json.dumps("Not valid structureType in payload")
-        }
 
     # Getting dynamodb resource
     dynamodb = boto3.resource('dynamodb')
     table = dynamodb.Table('Buildings')
 
-    # If the building exists get the building id
+    # This was commented to be able to register more than one building of the user
+    """""
     building_exists = check_user_buildings(building_payload["userId"], table)
 
     # Create an id if the element doesn't exists
@@ -46,10 +42,12 @@ def lambda_handler(event, context):
         building_payload["id"] = str(uuid.uuid4())
     else:
         building_payload["id"] = building_exists[0]["id"]
-    
+    """""
+    building_payload["id"] = str(uuid.uuid4())
+
     # Creating user in database
     response = table.put_item(
-        Item = building_payload
+        Item=building_payload
     )
 
     # Response for the client
@@ -62,24 +60,24 @@ def lambda_handler(event, context):
         'statusCode': 200,
         'body': json.dumps(data),
         'headers': {
-            "Access-Control-Allow-Origin" : "*",
-            "Access-Control-Allow-Credentials" : True
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Credentials": True
         }
     }
+
 
 def check_user_buildings(user_id, table):
 
     # Searching buildings of the user in the dynamodb
     response = table.query(
-        IndexName = "userId-index",
-        KeyConditionExpression = "userId = :usr",
-        ExpressionAttributeValues = {
+        IndexName="userId-index",
+        KeyConditionExpression="userId = :usr",
+        ExpressionAttributeValues={
             ":usr": user_id,
         },
 
     )
 
     buildings = response.get('Items', {})
-    
-    return buildings
 
+    return buildings
