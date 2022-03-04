@@ -1,6 +1,7 @@
 import json
 import boto3
 
+
 def lambda_handler(event, context):
 
     # Getting dynamodb resource
@@ -9,7 +10,7 @@ def lambda_handler(event, context):
 
     # Retrieving all information about buildings
     scan_args = {
-        'ProjectionExpression': "id, userName, userId"
+        'ProjectionExpression': "id, userName, userId, cadastralCode"
     }
 
     done = False
@@ -33,7 +34,7 @@ def lambda_handler(event, context):
         'statusCode': 200,
         'body': json.dumps(data),
         'headers': {
-            "Access-Control-Allow-Origin" : "*",
-            "Access-Control-Allow-Credentials" : True
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Credentials": True
         }
     }

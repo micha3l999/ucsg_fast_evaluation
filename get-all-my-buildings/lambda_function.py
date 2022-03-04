@@ -30,7 +30,7 @@ def lambda_handler(event, context):
     response = table.query(
         IndexName="userId-index",
         KeyConditionExpression=Key('userId').eq(userId),
-        ProjectionExpression="id, userName, userId",
+        ProjectionExpression="id, userName, userId, cadastralCode",
     )
 
     buildings = response.get('Items', [])
